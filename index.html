@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Multi Website Slider</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #111;
+    color: white;
+  }
+  .form-container {
+    padding: 15px;
+    background: #222;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .url-input {
+    padding: 5px;
+    width: 250px;
+    margin: 3px;
+    border: none;
+    border-radius: 5px;
+  }
+  .btn {
+    padding: 6px 12px;
+    margin: 3px;
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .btn-danger {
+    background: #dc3545;
+  }
+  .slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .slide {
+    position: relative;
+    width: 100vw;
+    height: 90vh;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .refresh-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    color: white;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <div id="input-area">
+    <input type="text" placeholder="Masukkan URL" class="url-input">
+  </div>
+  <button class="btn" onclick="tambahInput()">+ Tambah URL</button>
+  <button class="btn" onclick="tampilkanSlide()">Tampilkan Semua</button>
+</div>
+
+<div class="slider" id="slider"></div>
+
+<script>
+function tambahInput() {
+  const inputArea = document.getElementById('input-area');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Masukkan URL';
+  input.className = 'url-input';
+  inputArea.appendChild(input);
+}
+
+function tampilkanSlide() {
+  const container = document.getElementById('slider');
+  container.innerHTML = ''; // reset isi
+  document.querySelectorAll('.url-input').forEach((input, index) => {
+    if (input.value.trim() !== '') {
+      let url = input.value.trim();
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+      }
+      
+      // Buat wrapper slide
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      
+      // Buat iframe
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.id = 'iframe-' + index;
+      
+      // Tombol refresh
+      const btn = document.createElement('button');
+      btn.className = 'refresh-btn';
+      btn.innerText = '⟳';
+      btn.title = 'Refresh';
+      btn.onclick = () => {
+        iframe.src = iframe.src; // reload iframe
+      };
+      
+      // Gabungin
+      slide.appendChild(iframe);
+      slide.appendChild(btn);
+      container.appendChild(slide);
+    }
+  });
+}
+</script>
+
+</body>
+</html>
