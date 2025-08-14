@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Generator</title>
+<title>Prompt Keyword Ss & As</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -15,125 +15,130 @@
         margin: 0;
     }
     .container {
-        background: white;
+        background-color: white;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        max-width: 500px;
+        width: 100%;
     }
-    textarea, input {
+    h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    input {
         width: 100%;
         padding: 10px;
-        margin-top: 10px;
-        border-radius: 8px;
         border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
         font-size: 14px;
     }
     button {
-        margin-top: 10px;
-        padding: 10px;
-        width: 100%;
-        background: black;
+        background-color: #4CAF50;
         color: white;
+        padding: 10px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
+        width: 100%;
+        margin-bottom: 10px;
         font-size: 14px;
     }
-    .notification {
-        text-align: center;
-        font-size: 12px;
-        color: green;
-        margin-top: 8px;
-        display: none;
+    button:hover {
+        background-color: #45a049;
+    }
+    pre {
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        font-size: 13px;
+    }
+    .popup {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        font-size: 13px;
+    }
+    .popup.show {
+        opacity: 1;
     }
 </style>
 </head>
 <body>
+
 <div class="container">
-    <h3>Prompt Generator</h3>
-    <input type="text" id="title" placeholder="Masukkan judul lalu tekan Enter">
-    <button onclick="pasteAndGenerate()">📋 Paste & Generate</button>
-    <textarea id="prompt" rows="10" readonly></textarea>
+    <h2>Prompt Keyword Ss & As</h2>
+    <input type="text" id="judul" placeholder="Masukkan judul dan tekan Enter">
+    <button onclick="pasteAndEnter()">📋 Paste & Enter</button>
+    <pre id="preview"></pre>
     <button onclick="copyPrompt()">Copy Prompt</button>
-    <div class="notification" id="notif">✅ Prompt berhasil dicopy</div>
 </div>
 
+<div id="popup" class="popup">✅ Prompt berhasil disalin!</div>
+
 <script>
-const template = `Judul: [Tulis judul di sini]
+    const template = `Judul: [JUDUL]
 
 Perintah:
 
 1. Salin semua teks keyword tanpa typo dan pastikan tidak ada yang tertinggal.
-
 2. Hapus semua keyword yang terdeteksi duplikat.
-
 3. Tambahkan maksimal 3 kata tunggal dari judul jika belum ada di daftar keyword awal.
-
 4. Hapus keyword yang tidak relevan dengan judul/gambar. Keyword yang masih ada hubungan konteks tetap dipertahankan.
-
 5. Urutkan keyword sesuai kategori prioritas berikut (paling relevan di awal, paling umum di akhir):
-
 Produk Utama → objek inti gambar.
-
 Aplikasi Produk → kegunaan atau tujuan gambar.
-
 Mood / Style → suasana atau gaya visual.
-
 Teknik / Media → metode pembuatan atau format file.
-
 Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
-
 6. Prioritaskan 15 keyword pertama untuk:
-
 Keyword dengan relevansi paling tinggi.
-
 Keyword dengan volume pencarian tinggi di stok foto.
-
 Minimal 3 kata penting dari judul ada di urutan 1–10.
-
 7. Batasi hasil akhir menjadi maksimal 49 keyword. Prioritaskan kategori teratas jika jumlah melebihi batas.
-
 8. Setelah selesai, tampilkan:
 Proses detail: jelaskan apa yang dihapus, ditambahkan, dan perubahan urutan.
-
 Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
-
 Sebutkan jumlah total keyword.
-
 Tandai keyword urutan 1–15 sebagai Essential.`;
 
-document.getElementById('title').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        generatePrompt();
-    }
-});
-
-async function pasteAndGenerate() {
-    const text = await navigator.clipboard.readText();
-    document.getElementById('title').value = text;
-    generatePrompt();
-}
-
-function generatePrompt() {
-    const title = document.getElementById('title').value;
-    document.getElementById('prompt').value = template.replace('[Tulis judul di sini]', title);
-}
-
-function copyPrompt() {
-    const promptText = document.getElementById('prompt').value;
-    navigator.clipboard.writeText(promptText).then(() => {
-        showNotif();
+    document.getElementById("judul").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            generatePrompt();
+        }
     });
-}
 
-function showNotif() {
-    const notif = document.getElementById('notif');
-    notif.style.display = 'block';
-    setTimeout(() => {
-        notif.style.display = 'none';
-    }, 1500);
-}
-</script>
-</body>
-</html>
+    function generatePrompt() {
+        let judul = document.getElementById("judul").value;
+        let result = template.replace("[JUDUL]", judul);
+        document.getElementById("preview").textContent = result;
+    }
+
+    async function pasteAndEnter() {
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById("judul").value = text;
+            generatePrompt();
+        } catch (err) {
+            alert("Gagal membaca clipboard");
+        }
+    }
+
+    function copyPrompt() {
+        let promptText = document.getElementById("preview").textContent;
+        navigator.clipboard.writeText(promptText).then(() => {
+            showPopup();
+        });
+    }
+
+    function showPopup() {
+        le
