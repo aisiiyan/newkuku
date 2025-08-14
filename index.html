@@ -3,84 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Keyword Ss & As</title>
+<title>Prompt Generator</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
-        margin: 0;
-        padding: 20px;
+        background-color: #f9f9f9;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
+        height: 100vh;
+        margin: 0;
     }
-    h1 {
-        color: #333;
-        font-size: 22px;
-        margin-bottom: 15px;
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        width: 400px;
     }
-    input {
+    textarea, input {
+        width: 100%;
         padding: 10px;
-        width: 300px;
-        border: 1px solid #ccc;
+        margin-top: 10px;
         border-radius: 8px;
-        margin-bottom: 10px;
+        border: 1px solid #ddd;
         font-size: 14px;
     }
     button {
-        padding: 8px 14px;
+        margin-top: 10px;
+        padding: 10px;
+        width: 100%;
+        background: black;
+        color: white;
         border: none;
         border-radius: 8px;
-        background-color: #4CAF50;
-        color: white;
         cursor: pointer;
         font-size: 14px;
-        margin: 5px;
     }
-    button:hover {
-        background-color: #45a049;
-    }
-    .preview {
-        margin-top: 15px;
-        padding: 12px;
-        background-color: #fff;
-        border-radius: 8px;
-        width: 340px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        font-size: 13px;
-        line-height: 1.5;
-        white-space: pre-wrap;
-    }
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        background-color: #333;
-        color: white;
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-size: 13px;
-        opacity: 0;
-        transition: opacity 0.4s ease-in-out;
-    }
-    .toast.show {
-        opacity: 1;
+    .notification {
+        text-align: center;
+        font-size: 12px;
+        color: green;
+        margin-top: 8px;
+        display: none;
     }
 </style>
 </head>
 <body>
-
-<h1>Prompt Keyword Ss & As</h1>
-<input type="text" id="judul" placeholder="Tulis judul di sini">
-<div>
-    <button id="pasteBtn">Paste</button>
-    <button id="copyBtn">Copy</button>
+<div class="container">
+    <h3>Prompt Generator</h3>
+    <input type="text" id="title" placeholder="Masukkan judul lalu tekan Enter">
+    <button onclick="pasteAndGenerate()">📋 Paste & Generate</button>
+    <textarea id="prompt" rows="10" readonly></textarea>
+    <button onclick="copyPrompt()">Copy Prompt</button>
+    <div class="notification" id="notif">✅ Prompt berhasil dicopy</div>
 </div>
-<div class="preview" id="preview"></div>
-
-<div class="toast" id="toast">Teks berhasil disalin!</div>
 
 <script>
-const promptTemplate = `Judul: [Tulis judul di sini]
+const template = `Judul: [Tulis judul di sini]
 
 Perintah:
 
@@ -123,39 +103,37 @@ Sebutkan jumlah total keyword.
 
 Tandai keyword urutan 1–15 sebagai Essential.`;
 
-const judulInput = document.getElementById("judul");
-const preview = document.getElementById("preview");
-const toast = document.getElementById("toast");
-
-function updatePreview() {
-    const judul = judulInput.value.trim();
-    if (judul) {
-        const finalPrompt = promptTemplate.replace("[Tulis judul di sini]", judul);
-        preview.textContent = finalPrompt;
-    }
-}
-
-function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add("show");
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 1500);
-}
-
-document.getElementById("copyBtn").addEventListener("click", () => {
-    const text = preview.textContent;
-    if (text) {
-        navigator.clipboard.writeText(text).then(() => {
-            showToast("Prompt berhasil disalin!");
-        });
+document.getElementById('title').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        generatePrompt();
     }
 });
 
-document.getElementById("pasteBtn").addEventListener("click", async () => {
-    try {
-        const text = await navigator.clipboard.readText();
-        judulInput.value = text;
-        updatePreview(); // langsung generate prompt
-    } catch (err) {
-        alert("Gagal mengambil teks dari clipboard!");
+async function pasteAndGenerate() {
+    const text = await navigator.clipboard.readText();
+    document.getElementById('title').value = text;
+    generatePrompt();
+}
+
+function generatePrompt() {
+    const title = document.getElementById('title').value;
+    document.getElementById('prompt').value = template.replace('[Tulis judul di sini]', title);
+}
+
+function copyPrompt() {
+    const promptText = document.getElementById('prompt').value;
+    navigator.clipboard.writeText(promptText).then(() => {
+        showNotif();
+    });
+}
+
+function showNotif() {
+    const notif = document.getElementById('notif');
+    notif.style.display = 'block';
+    setTimeout(() => {
+        notif.style.display = 'none';
+    }, 1500);
+}
+</script>
+</body>
+</html>
