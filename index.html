@@ -11,6 +11,24 @@
   .btn-green { background: #4CAF50; color: white; }
   .btn-blue { background: #2196F3; color: white; margin-top: 10px; }
   .preview { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-line; font-size: 14px; border: 1px solid #ddd; }
+  /* Toast Style */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 </head>
 <body>
@@ -28,6 +46,9 @@
     <button class="btn-blue" onclick="copyPrompt()">Copy Prompt</button>
   </div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">✅ Prompt berhasil disalin</div>
 
 <script>
 const templatePrompt = `Judul: [Tulis judul di sini]
@@ -62,6 +83,7 @@ Tandai keyword urutan 1–15 sebagai Essential.`
 const judulInput = document.getElementById('judulInput');
 const preview = document.getElementById('preview');
 const previewText = document.getElementById('previewText');
+const toast = document.getElementById('toast');
 
 function generatePrompt(judul) {
   const hasil = templatePrompt.replace("[Tulis judul di sini]", judul);
@@ -82,19 +104,27 @@ async function pasteAndGenerate() {
   try {
     const text = await navigator.clipboard.readText();
     if (!text) {
-      alert("Clipboard kosong!");
+      showToast("⚠️ Clipboard kosong");
       return;
     }
     judulInput.value = text.trim();
     generatePrompt(text.trim());
   } catch (err) {
-    alert("Gagal membaca clipboard. Pastikan memberi izin.");
+    showToast("❌ Gagal membaca clipboard");
   }
 }
 
 function copyPrompt() {
   navigator.clipboard.writeText(previewText.textContent)
-    .then(() => alert("Prompt berhasil disalin!"));
+    .then(() => showToast("✅ Prompt berhasil disalin"));
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
 }
 </script>
 
