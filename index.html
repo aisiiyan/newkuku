@@ -11,10 +11,16 @@
   <h1 class="text-xl font-semibold mb-4 text-gray-800">Generator Prompt</h1>
   
   <!-- Input Judul -->
-  <input id="judulInput" 
-         type="text" 
-         placeholder="Masukkan Judul lalu tekan Enter"
-         class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none mb-4">
+  <div class="flex gap-2 mb-4">
+    <input id="judulInput" 
+           type="text" 
+           placeholder="Masukkan Judul lalu tekan Enter"
+           class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+    <button onclick="pasteAndGenerate()" 
+            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
+      Paste & Generate
+    </button>
+  </div>
   
   <!-- Preview -->
   <div id="preview" class="hidden">
@@ -33,6 +39,7 @@
 const templatePrompt = `Judul: [Tulis judul di sini]
 
 Perintah:
+
 1. Salin semua teks keyword tanpa typo dan pastikan tidak ada yang tertinggal.
 2. Hapus semua keyword yang terdeteksi duplikat.
 3. Tambahkan maksimal 3 kata tunggal dari judul jika belum ada di daftar keyword awal.
@@ -62,17 +69,34 @@ const judulInput = document.getElementById('judulInput');
 const preview = document.getElementById('preview');
 const previewText = document.getElementById('previewText');
 
+function generatePrompt(judul) {
+  const hasil = templatePrompt.replace("[Tulis judul di sini]", judul);
+  previewText.textContent = hasil;
+  preview.classList.remove('hidden');
+}
+
 judulInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
     e.preventDefault();
     const judul = judulInput.value.trim();
     if (!judul) return;
-    
-    const hasil = templatePrompt.replace("[Tulis judul di sini]", judul);
-    previewText.textContent = hasil;
-    preview.classList.remove('hidden');
+    generatePrompt(judul);
   }
 });
+
+async function pasteAndGenerate() {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text) {
+      alert("Clipboard kosong!");
+      return;
+    }
+    judulInput.value = text.trim();
+    generatePrompt(text.trim());
+  } catch (err) {
+    alert("Gagal membaca clipboard. Pastikan memberi izin.");
+  }
+}
 
 function copyPrompt() {
   navigator.clipboard.writeText(previewText.textContent)
