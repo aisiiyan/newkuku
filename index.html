@@ -7,138 +7,155 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+        background-color: #f5f5f5;
         margin: 0;
-    }
-    .container {
-        background-color: white;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        max-width: 500px;
-        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-    h2 {
-        text-align: center;
+    h1 {
+        color: #333;
+        font-size: 22px;
         margin-bottom: 15px;
-        font-weight: 600;
     }
     input {
-        width: 100%;
         padding: 10px;
-        border: 1px solid #ddd;
+        width: 300px;
+        border: 1px solid #ccc;
         border-radius: 8px;
         margin-bottom: 10px;
         font-size: 14px;
     }
     button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px;
+        padding: 8px 14px;
         border: none;
         border-radius: 8px;
+        background-color: #4CAF50;
+        color: white;
         cursor: pointer;
-        width: 100%;
-        margin-bottom: 10px;
         font-size: 14px;
+        margin: 5px;
     }
     button:hover {
         background-color: #45a049;
     }
-    pre {
-        background: #f0f0f0;
-        padding: 10px;
+    .preview {
+        margin-top: 15px;
+        padding: 12px;
+        background-color: #fff;
         border-radius: 8px;
-        white-space: pre-wrap;
+        width: 340px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
     }
-    .popup {
+    .toast {
         position: fixed;
         bottom: 20px;
-        right: 20px;
-        background-color: #4CAF50;
+        background-color: #333;
         color: white;
-        padding: 8px 12px;
-        border-radius: 8px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        padding: 8px 14px;
+        border-radius: 6px;
         font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
     }
-    .popup.show {
+    .toast.show {
         opacity: 1;
     }
 </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Prompt Keyword Ss & As</h2>
-    <input type="text" id="judul" placeholder="Masukkan judul dan tekan Enter">
-    <button onclick="pasteAndEnter()">📋 Paste & Enter</button>
-    <pre id="preview"></pre>
-    <button onclick="copyPrompt()">Copy Prompt</button>
+<h1>Prompt Keyword Ss & As</h1>
+<input type="text" id="judul" placeholder="Tulis judul di sini">
+<div>
+    <button id="pasteBtn">Paste</button>
+    <button id="copyBtn">Copy</button>
 </div>
+<div class="preview" id="preview"></div>
 
-<div id="popup" class="popup">✅ Prompt berhasil disalin!</div>
+<div class="toast" id="toast">Teks berhasil disalin!</div>
 
 <script>
-    const template = `Judul: [JUDUL]
+const promptTemplate = `Judul: [Tulis judul di sini]
 
 Perintah:
 
 1. Salin semua teks keyword tanpa typo dan pastikan tidak ada yang tertinggal.
+
 2. Hapus semua keyword yang terdeteksi duplikat.
+
 3. Tambahkan maksimal 3 kata tunggal dari judul jika belum ada di daftar keyword awal.
+
 4. Hapus keyword yang tidak relevan dengan judul/gambar. Keyword yang masih ada hubungan konteks tetap dipertahankan.
+
 5. Urutkan keyword sesuai kategori prioritas berikut (paling relevan di awal, paling umum di akhir):
+
 Produk Utama → objek inti gambar.
+
 Aplikasi Produk → kegunaan atau tujuan gambar.
+
 Mood / Style → suasana atau gaya visual.
+
 Teknik / Media → metode pembuatan atau format file.
+
 Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
+
 6. Prioritaskan 15 keyword pertama untuk:
+
 Keyword dengan relevansi paling tinggi.
+
 Keyword dengan volume pencarian tinggi di stok foto.
+
 Minimal 3 kata penting dari judul ada di urutan 1–10.
+
 7. Batasi hasil akhir menjadi maksimal 49 keyword. Prioritaskan kategori teratas jika jumlah melebihi batas.
+
 8. Setelah selesai, tampilkan:
 Proses detail: jelaskan apa yang dihapus, ditambahkan, dan perubahan urutan.
+
 Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
+
 Sebutkan jumlah total keyword.
+
 Tandai keyword urutan 1–15 sebagai Essential.`;
 
-    document.getElementById("judul").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            generatePrompt();
-        }
-    });
+const judulInput = document.getElementById("judul");
+const preview = document.getElementById("preview");
+const toast = document.getElementById("toast");
 
-    function generatePrompt() {
-        let judul = document.getElementById("judul").value;
-        let result = template.replace("[JUDUL]", judul);
-        document.getElementById("preview").textContent = result;
+function updatePreview() {
+    const judul = judulInput.value.trim();
+    if (judul) {
+        const finalPrompt = promptTemplate.replace("[Tulis judul di sini]", judul);
+        preview.textContent = finalPrompt;
     }
+}
 
-    async function pasteAndEnter() {
-        try {
-            const text = await navigator.clipboard.readText();
-            document.getElementById("judul").value = text;
-            generatePrompt();
-        } catch (err) {
-            alert("Gagal membaca clipboard");
-        }
-    }
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 1500);
+}
 
-    function copyPrompt() {
-        let promptText = document.getElementById("preview").textContent;
-        navigator.clipboard.writeText(promptText).then(() => {
-            showPopup();
+document.getElementById("copyBtn").addEventListener("click", () => {
+    const text = preview.textContent;
+    if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Prompt berhasil disalin!");
         });
     }
+});
 
-    function showPopup() {
-        le
+document.getElementById("pasteBtn").addEventListener("click", async () => {
+    try {
+        const text = await navigator.clipboard.readText();
+        judulInput.value = text;
+        updatePreview(); // langsung generate prompt
+    } catch (err) {
+        alert("Gagal mengambil teks dari clipboard!");
