@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Generator</title>
+<title>Prompt Keyword Ss & As</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -40,6 +40,9 @@
         cursor: pointer;
         font-size: 14px;
     }
+    button:hover {
+        background: #333;
+    }
     .notification {
         text-align: center;
         font-size: 12px;
@@ -51,7 +54,7 @@
 </head>
 <body>
 <div class="container">
-    <h3>Prompt Generator</h3>
+    <h3>Prompt Keyword Ss & As</h3>
     <input type="text" id="title" placeholder="Masukkan judul lalu tekan Enter">
     <button onclick="pasteAndGenerate()">📋 Paste & Generate</button>
     <textarea id="prompt" rows="10" readonly></textarea>
@@ -72,68 +75,4 @@ Perintah:
 
 4. Hapus keyword yang tidak relevan dengan judul/gambar. Keyword yang masih ada hubungan konteks tetap dipertahankan.
 
-5. Urutkan keyword sesuai kategori prioritas berikut (paling relevan di awal, paling umum di akhir):
-
-Produk Utama → objek inti gambar.
-
-Aplikasi Produk → kegunaan atau tujuan gambar.
-
-Mood / Style → suasana atau gaya visual.
-
-Teknik / Media → metode pembuatan atau format file.
-
-Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
-
-6. Prioritaskan 15 keyword pertama untuk:
-
-Keyword dengan relevansi paling tinggi.
-
-Keyword dengan volume pencarian tinggi di stok foto.
-
-Minimal 3 kata penting dari judul ada di urutan 1–10.
-
-7. Batasi hasil akhir menjadi maksimal 49 keyword. Prioritaskan kategori teratas jika jumlah melebihi batas.
-
-8. Setelah selesai, tampilkan:
-Proses detail: jelaskan apa yang dihapus, ditambahkan, dan perubahan urutan.
-
-Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
-
-Sebutkan jumlah total keyword.
-
-Tandai keyword urutan 1–15 sebagai Essential.`;
-
-document.getElementById('title').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        generatePrompt();
-    }
-});
-
-async function pasteAndGenerate() {
-    const text = await navigator.clipboard.readText();
-    document.getElementById('title').value = text;
-    generatePrompt();
-}
-
-function generatePrompt() {
-    const title = document.getElementById('title').value;
-    document.getElementById('prompt').value = template.replace('[Tulis judul di sini]', title);
-}
-
-function copyPrompt() {
-    const promptText = document.getElementById('prompt').value;
-    navigator.clipboard.writeText(promptText).then(() => {
-        showNotif();
-    });
-}
-
-function showNotif() {
-    const notif = document.getElementById('notif');
-    notif.style.display = 'block';
-    setTimeout(() => {
-        notif.style.display = 'none';
-    }, 1500);
-}
-</script>
-</body>
-</html>
+5. Urutkan keyword sesuai kategori prioritas be
