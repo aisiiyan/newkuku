@@ -1,131 +1,156 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prompt Generator</title>
 <style>
-  body { font-family: sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
-  .container { background: white; padding: 20px; border-radius: 10px; max-width: 600px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  input { width: calc(100% - 110px); padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-  button { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; }
-  .btn-green { background: #4CAF50; color: white; }
-  .btn-blue { background: #2196F3; color: white; margin-top: 10px; }
-  .preview { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-line; font-size: 14px; border: 1px solid #ddd; }
-  /* Toast Style */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  .toast.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+    }
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .preview {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+    }
+    /* Toast Style */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+    .toast.show {
+        opacity: 1;
+    }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Prompt Generator</h2>
-  <div style="display: flex; gap: 10px;">
-    <input type="text" id="judulInput" placeholder="Masukkan Judul lalu tekan Enter">
-    <button class="btn-green" onclick="pasteAndGenerate()">Paste & Generate</button>
-  </div>
-  
-  <div id="preview" style="display:none;">
-    <h3>Preview:</h3>
-    <div class="preview" id="previewText"></div>
-    <button class="btn-blue" onclick="copyPrompt()">Copy Prompt</button>
-  </div>
+    <input type="text" id="judulInput" placeholder="Masukkan Judul">
+    <button id="pasteBtn">📋 Paste & Generate</button>
+    <div class="preview" id="preview"></div>
+    <button id="copyBtn">Copy Prompt</button>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast">✅ Prompt berhasil disalin</div>
+<div class="toast" id="toast">✅ Prompt berhasil dicopy!</div>
 
 <script>
-const templatePrompt = `Judul: [Tulis judul di sini]
+    const judulInput = document.getElementById('judulInput');
+    const preview = document.getElementById('preview');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+    const pasteBtn = document.getElementById('pasteBtn');
+
+    const template = `Judul: [Tulis judul di sini]
 
 Perintah:
 
 1. Salin semua teks keyword tanpa typo dan pastikan tidak ada yang tertinggal.
+
 2. Hapus semua keyword yang terdeteksi duplikat.
+
 3. Tambahkan maksimal 3 kata tunggal dari judul jika belum ada di daftar keyword awal.
+
 4. Hapus keyword yang tidak relevan dengan judul/gambar. Keyword yang masih ada hubungan konteks tetap dipertahankan.
+
 5. Urutkan keyword sesuai kategori prioritas berikut (paling relevan di awal, paling umum di akhir):
 
 Produk Utama → objek inti gambar.
+
 Aplikasi Produk → kegunaan atau tujuan gambar.
+
 Mood / Style → suasana atau gaya visual.
+
 Teknik / Media → metode pembuatan atau format file.
+
 Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
 
 6. Prioritaskan 15 keyword pertama untuk:
+
 Keyword dengan relevansi paling tinggi.
+
 Keyword dengan volume pencarian tinggi di stok foto.
+
 Minimal 3 kata penting dari judul ada di urutan 1–10.
 
 7. Batasi hasil akhir menjadi maksimal 49 keyword. Prioritaskan kategori teratas jika jumlah melebihi batas.
 
 8. Setelah selesai, tampilkan:
 Proses detail: jelaskan apa yang dihapus, ditambahkan, dan perubahan urutan.
+
 Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
+
 Sebutkan jumlah total keyword.
-Tandai keyword urutan 1–15 sebagai Essential.`
 
-const judulInput = document.getElementById('judulInput');
-const preview = document.getElementById('preview');
-const previewText = document.getElementById('previewText');
-const toast = document.getElementById('toast');
+Tandai keyword urutan 1–15 sebagai Essential.`;
 
-function generatePrompt(judul) {
-  const hasil = templatePrompt.replace("[Tulis judul di sini]", judul);
-  previewText.textContent = hasil;
-  preview.style.display = 'block';
-}
-
-judulInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const judul = judulInput.value.trim();
-    if (!judul) return;
-    generatePrompt(judul);
-  }
-});
-
-async function pasteAndGenerate() {
-  try {
-    const text = await navigator.clipboard.readText();
-    if (!text) {
-      showToast("⚠️ Clipboard kosong");
-      return;
+    function updatePreview(judul) {
+        preview.textContent = template.replace("[Tulis judul di sini]", judul);
     }
-    judulInput.value = text.trim();
-    generatePrompt(text.trim());
-  } catch (err) {
-    showToast("❌ Gagal membaca clipboard");
-  }
-}
 
-function copyPrompt() {
-  navigator.clipboard.writeText(previewText.textContent)
-    .then(() => showToast("✅ Prompt berhasil disalin"));
-}
+    // Tombol paste + generate
+    pasteBtn.addEventListener('click', async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            judulInput.value = text;
+            updatePreview(text);
+        } catch (err) {
+            console.error('Gagal paste:', err);
+        }
+    });
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
-}
+    // Tombol copy prompt
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(preview.textContent).then(() => {
+            showToast();
+        });
+    });
+
+    function showToast() {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
 </script>
 
 </body>
