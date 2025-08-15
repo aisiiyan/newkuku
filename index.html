@@ -1,78 +1,92 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Tools - Judul + Ss & As + iStock</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Prompt Tools — Judul, Ss & As, iStock</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        margin: 0;
-        padding: 20px;
-    }
-    h2 {
-        font-size: 18px;
-        margin-top: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .wrapper {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    .container {
-        background: white;
-        flex: 1;
-        min-width: 300px;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    label {
-        font-weight: bold;
-        display: block;
-        margin-top: 10px;
-    }
-    textarea {
-        width: 100%;
-        margin: 0;
-        padding: 8px;
-        border: none;
-        border-radius: 6px;
-        resize: vertical;
-        font-size: 14px;
-        background: #f9f9f9;
-    }
-    .btn-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin-top: 5px;
-    }
-    button {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        background: #007bff;
-        color: white;
-        font-size: 13px;
-    }
-    button:hover { background: #0056b3; }
-    .reset-btn {
-        background: #dc3545;
-    }
-    .reset-btn:hover { background: #a71d2a; }
+  :root{
+    --bg:#f5f5f5;
+    --card:#ffffff;
+    --muted:#f9f9f9;
+    --text:#111;
+    --primary:#0a7cff;
+    --primary-hover:#055ec2;
+    --danger:#e44747;
+    --danger-hover:#b22f2f;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:20px;
+    font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background:var(--bg); color:var(--text);
+  }
+  .wrapper{display:flex; flex-direction:column; gap:20px; max-width:1200px; margin:0 auto;}
+  .columns{display:flex; gap:20px; flex-wrap:wrap;}
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:0 4px 16px rgba(0,0,0,.06);
+    padding:16px;
+    flex:1;
+    min-width:320px;
+  }
+  .card h2{
+    margin:0 0 10px 0;
+    font-size:18px; font-weight:700;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+  }
+  label{display:block; font-size:13px; font-weight:600; margin-top:10px;}
+  textarea{
+    width:100%; min-height:84px; margin:6px 0 0 0;
+    padding:10px 12px; border:none; border-radius:10px;
+    background:var(--muted); color:var(--text); resize:vertical; font-size:14px; line-height:1.45;
+  }
+  .btns{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+  button{
+    appearance:none; border:none; cursor:pointer;
+    border-radius:10px; padding:8px 12px; font-size:13px; font-weight:600;
+    background:var(--primary); color:#fff;
+  }
+  button:hover{background:var(--primary-hover)}
+  .btn-danger{background:var(--danger)}
+  .btn-danger:hover{background:var(--danger-hover)}
+  .highlight{ background:#d4edda !important; transition:background-color .6s ease; }
+
+  /* Notif copy */
+  .copy-notif {
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  .copy-notif.show {
+    opacity: 1;
+  }
+
+  @media (max-width: 720px){
+    .card h2{align-items:flex-start; flex-direction:column; gap:8px;}
+  }
 </style>
 </head>
 <body>
+  <div class="wrapper">
 
-<div class="container" style="max-width:800px;margin:0 auto 20px auto;">
-    <h2>Prompt Judul</h2>
-    <textarea id="prompt_judul" rows="10" readonly>Buat 4 judul unik dan berbeda berdasarkan foto yang diunggah, masing-masing mengikuti struktur dan aturan yang sudah dijelaskan di bawah.
+    <!-- Prompt Judul -->
+    <section class="card">
+      <h2>Prompt Judul</h2>
+      <label for="prompt_judul">Teks Prompt:</label>
+      <textarea id="prompt_judul" rows="14" readonly>
+Buat 4 judul unik dan berbeda berdasarkan foto yang diunggah, masing-masing mengikuti struktur dan aturan yang sudah dijelaskan di bawah.
 
 Perintah:
 1. Analisis foto yang diunggah dan buat judul deskriptif untuk karya desain.
@@ -93,7 +107,7 @@ Perintah:
 
 8. Hindari pengulangan kata, daftar tag kaku, dan tanda baca berlebihan.
 
-9. Output dalam bahasa Inggris, lalu beri terjemahan bahasa Indonesia di baris baru dalam tanda kurung).
+9. Output dalam bahasa Inggris, lalu beri terjemahan bahasa Indonesia di baris baru dalam tanda kurung.
 
 10. PENTING: Contoh judul hanya sebagai referensi struktur & gaya, jangan copy kata-kata dari contoh secara literal.
 
@@ -102,78 +116,112 @@ Perintah:
 Contoh format (referensi, jangan dicopy kata per kata):
 [Produk Utama] for [Use Case1], [Use Case2], and [Use Case3]
 
-12. Gunakan kata tunggal untuk bagian use case (misalnya: poster, packaging, presentation, website), hindari frasa dua kata.</textarea>
-    <div class="btn-group">
-        <button onclick="copyText('prompt_judul')">Copy</button>
-    </div>
-</div>
+12. Gunakan kata tunggal untuk bagian use case (misalnya: poster, packaging, presentation, website), hindari frasa dua kata.
+      </textarea>
+      <div class="btns">
+        <button onclick="copyText('prompt_judul')">Copy Prompt</button>
+      </div>
+    </section>
 
-<div class="wrapper">
-    <div class="container">
-        <h2>Prompt Keyword Ss & As <button class="reset-btn" onclick="resetFieldsSS()">Reset</button></h2>
-        <label>Judul:</label>
-        <textarea id="judul_ss" rows="3"></textarea>
-        <div class="btn-group">
-            <button onclick="pasteText('judul_ss')">Paste</button>
-            <button onclick="generatePromptSS()">Generate Prompt</button>
+    <!-- Dua kolom: Ss & As dan iStock -->
+    <div class="columns">
+
+      <!-- Prompt Keyword Ss & As -->
+      <section class="card">
+        <h2>
+          Prompt Keyword Ss &amp; As
+          <button class="btn-danger" onclick="resetFieldsSS()">Reset</button>
+        </h2>
+
+        <label for="judul_ss">Judul:</label>
+        <textarea id="judul_ss" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="pasteTo('judul_ss')">Paste</button>
+          <button onclick="generatePromptSS()">Generate Prompt</button>
         </div>
-        <label>Prompt Hasil:</label>
-        <textarea id="promptOutput_ss" rows="10" readonly></textarea>
-        <div class="btn-group">
-            <button onclick="copyText('promptOutput_ss')">Copy</button>
+
+        <label for="promptOutput_ss">Prompt Hasil:</label>
+        <textarea id="promptOutput_ss" rows="10" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="copyText('promptOutput_ss')">Copy Prompt</button>
         </div>
+      </section>
+
+      <!-- Prompt Keyword iStock -->
+      <section class="card">
+        <h2>
+          Prompt Keyword iStock
+          <button class="btn-danger" onclick="resetFieldsIstock()">Reset</button>
+        </h2>
+
+        <label for="judul_istock">Judul:</label>
+        <textarea id="judul_istock" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="pasteTo('judul_istock')">Paste</button>
+        </div>
+
+        <label for="keyword_istock">Keyword (awal):</label>
+        <textarea id="keyword_istock" rows="5" placeholder="Tempel daftar keyword awal (dipisahkan koma)..."></textarea>
+        <div class="btns">
+          <button onclick="pasteTo('keyword_istock')">Paste</button>
+          <button onclick="generatePromptIstock()">Generate Prompt</button>
+        </div>
+
+        <label for="promptOutput_istock">Prompt Hasil:</label>
+        <textarea id="promptOutput_istock" rows="10" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="copyText('promptOutput_istock')">Copy Prompt</button>
+        </div>
+      </section>
+
     </div>
-    <div class="container">
-        <h2>Prompt Keyword iStock <button class="reset-btn" onclick="resetFieldsIstock()">Reset</button></h2>
-        <label>Judul:</label>
-        <textarea id="judul_istock" rows="3"></textarea>
-        <div class="btn-group">
-            <button onclick="pasteText('judul_istock')">Paste</button>
-        </div>
-        <label>Keyword:</label>
-        <textarea id="keyword_istock" rows="5"></textarea>
-        <div class="btn-group">
-            <button onclick="pasteText('keyword_istock')">Paste</button>
-            <button onclick="generatePromptIstock()">Generate Prompt</button>
-        </div>
-        <label>Prompt Hasil:</label>
-        <textarea id="promptOutput_istock" rows="10" readonly></textarea>
-        <div class="btn-group">
-            <button onclick="copyText('promptOutput_istock')">Copy</button>
-        </div>
-    </div>
-</div>
+  </div>
+
+  <!-- Notif -->
+  <div class="copy-notif" id="notif">✅ Prompt berhasil disalin!</div>
 
 <script>
-function pasteText(id) {
-    navigator.clipboard.readText().then(text => {
-        document.getElementById(id).value = text;
-    });
-}
-
-function copyText(id) {
-    const textArea = document.getElementById(id);
-    textArea.select();
-    document.execCommand("copy");
-}
-
-function resetFieldsSS() {
+  async function pasteTo(id){
+    try{
+      const text = await navigator.clipboard.readText();
+      document.getElementById(id).value = text;
+    }catch(e){
+      alert('Gagal membaca clipboard. Pastikan memberi izin paste.');
+    }
+  }
+  async function copyText(id){
+    try{
+      const text = document.getElementById(id).value;
+      await navigator.clipboard.writeText(text);
+      showNotif();
+    }catch(e){
+      const ta = document.getElementById(id);
+      ta.select(); document.execCommand('copy');
+      showNotif();
+    }
+  }
+  function showNotif(){
+    const notif = document.getElementById('notif');
+    notif.classList.add('show');
+    setTimeout(()=> notif.classList.remove('show'), 1500);
+  }
+  function highlight(id){
+    const el = document.getElementById(id);
+    el.classList.add('highlight');
+    setTimeout(()=> el.classList.remove('highlight'), 1500);
+  }
+  function resetFieldsSS(){
     document.getElementById('judul_ss').value = '';
     document.getElementById('promptOutput_ss').value = '';
-}
-
-function resetFieldsIstock() {
+  }
+  function resetFieldsIstock(){
     document.getElementById('judul_istock').value = '';
     document.getElementById('keyword_istock').value = '';
     document.getElementById('promptOutput_istock').value = '';
-}
-
-function generatePromptSS() {
+  }
+  function generatePromptSS(){
     const judul = document.getElementById('judul_ss').value.trim();
-    if (!judul) {
-        alert('Judul tidak boleh kosong!');
-        return;
-    }
+    if(!judul){ alert('Judul tidak boleh kosong!'); return; }
     const prompt = `Judul: [${judul}]
 
 Perintah:
@@ -202,19 +250,17 @@ Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
 - Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
 - Sebutkan jumlah total keyword.
 - Tandai keyword urutan 1–15 sebagai Essential.`;
-    document.getElementById('promptOutput_ss').value = prompt;
-}
-
-function generatePromptIstock() {
+    const out = document.getElementById('promptOutput_ss');
+    out.value = prompt;
+    highlight('promptOutput_ss');
+  }
+  function generatePromptIstock(){
     const judul = document.getElementById('judul_istock').value.trim();
     const keyword = document.getElementById('keyword_istock').value.trim();
-    if (!judul || !keyword) {
-        alert('Judul dan Keyword tidak boleh kosong!');
-        return;
-    }
+    if(!judul || !keyword){ alert('Judul dan Keyword tidak boleh kosong!'); return; }
     const prompt = `Judul: [${judul}]
 
-Keyword: [${keyword}]
+Keyword (awal): [${keyword}]
 
 Instruksi:
 1. Tambahkan hingga 3 kata tunggal dari judul jika belum ada di daftar keyword awal, untuk menjaga relevansi dan sinkronisasi. Jangan tambahkan frasa atau gabungan kata pada tahap ini.
@@ -236,9 +282,10 @@ Output akhir:
 
 Deskripsi:
 Buatkan deskripsi sepanjang ±150 karakter, profesional dan selaras dengan judul serta keyword. Fokus pada isi visual dan konteks penggunaannya.`;
-    document.getElementById('promptOutput_istock').value = prompt;
-}
+    const out = document.getElementById('promptOutput_istock');
+    out.value = prompt;
+    highlight('promptOutput_istock');
+  }
 </script>
-
 </body>
 </html>
