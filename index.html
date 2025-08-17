@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Prompt Tools — Judul, Ss & As, iStock</title>
+<title>Prompt Tools — Judul, Convert Judul iStock, Ss & As, iStock</title>
 <style>
   :root{
     --bg:#f5f5f5;
@@ -54,8 +54,6 @@
   .btn-danger{background:var(--danger)}
   .btn-danger:hover{background:var(--danger-hover)}
   .highlight{ background:#d4edda !important; transition:background-color .6s ease; }
-
-  /* Notif copy */
   .copy-notif {
     background: rgba(0, 0, 0, 0.85);
     color: white;
@@ -69,10 +67,7 @@
     transition: opacity 0.3s ease;
     z-index: 1000;
   }
-  .copy-notif.show {
-    opacity: 1;
-  }
-
+  .copy-notif.show { opacity: 1; }
   @media (max-width: 720px){
     .card h2{align-items:flex-start; flex-direction:column; gap:8px;}
   }
@@ -81,67 +76,94 @@
 <body>
   <div class="wrapper">
 
-    <!-- Prompt Judul -->
-    <section class="card">
-      <h2>Prompt Judul</h2>
-      <label for="prompt_judul">Teks Prompt:</label>
-      <textarea id="prompt_judul" rows="14" readonly>
-Buat 4 judul unik dan berbeda berdasarkan foto yang diunggah, masing-masing mengikuti struktur dan aturan yang sudah dijelaskan di bawah.
-
-Perintah:
-1. Analisis foto yang diunggah dan buat judul deskriptif untuk karya desain.
-
-2. Gunakan struktur judul:
-
-[Produk Utama] + [Style/Visual Gaya (opsional)] + [Aplikasi/Use Case] + [Mood (opsional)]
-
-3. Produk Utama harus berada di 3–5 kata pertama.
-
-4. Use Case / Aplikasi: 3–5 item, spesifik, relevan dengan media/output (digital atau cetak). Gunakan satu kata “for” di awal.
-
-5. Style / Mood: tambahkan hanya jika terlihat jelas atau terasa dari visual.
-
-6. Panjang ideal judul: 70–90 karakter.
-
-7. Gunakan Title Case, kecuali kata hubung/preposisi umum (“for”, “and”, “with”, “of”).
-
-8. Hindari pengulangan kata, daftar tag kaku, dan tanda baca berlebihan.
-
-9. Output dalam bahasa Inggris, lalu beri terjemahan bahasa Indonesia di baris baru dalam tanda kurung.
-
-10. PENTING: Contoh judul hanya sebagai referensi struktur & gaya, jangan copy kata-kata dari contoh secara literal.
-
-11. Hasil judul harus unik dan relevan dengan foto yang diberikan.
-
-Contoh format (referensi, jangan dicopy kata per kata):
-[Produk Utama] for [Use Case1], [Use Case2], and [Use Case3]
-
-12. Gunakan kata tunggal untuk bagian use case (misalnya: poster, packaging, presentation, website), hindari frasa dua kata.
-      </textarea>
-      <div class="btns">
-        <button onclick="copyText('prompt_judul')">Copy Prompt</button>
-      </div>
-    </section>
-
-    <!-- Dua kolom: Ss & As dan iStock -->
+    <!-- Kolom atas: Prompt Judul & Prompt Convert Judul iStock -->
     <div class="columns">
+      <!-- Prompt Judul -->
+      <section class="card">
+        <h2>Prompt Judul</h2>
+        <label for="prompt_judul">Teks Prompt:</label>
+        <textarea id="prompt_judul" rows="14" readonly>
+PERINTAH:
+Buat 4 judul unik dan berbeda berdasarkan foto yang diunggah, dengan masing-masing mengikuti aturan ini:
 
+Analisis Visual:
+•  Identifikasi produk utama secara spesifik (contoh: 3D metallic arrow icon, watercolor botanical pattern, flat infographic element).
+•  Sebutkan bentuk, gaya, dan/atau teknik (contoh: brush stroke, geometric, hand-drawn, isometric, gradient).
+• Tambahkan detail teknis jika relevan (contoh: isolated on white, seamless pattern, transparent background).
+
+Struktur Judul:
+• [Produk Utama Spesifik] + [Detail Visual/Style dan warna] + for [Use Case1], [Use Case2]
+
+Aturan:
+• Produk Utama harus berada di 3–5 kata pertama.
+• Use Case:
+  → Gunakan kata tunggal (contoh: poster, packaging, website, presentation, banner, card).
+  → Maksimal 2 item, relevan dengan media/output (digital atau cetak).
+  → Selalu diawali dengan "for".
+• Warna Dominan harus dimasukkan di awal judul, setelah produk utama
+• Tambahkan style visual jika tampak jelas (misalnya: minimalist, vintage, flat, bold, gradient, etc).
+•  Panjang judul:
+ → minimal 70 karakter.
+ → maksimal 90 karakter.
+- Gunakan Title Case kecuali kata hubung/preposisi umum ("for", "and", "with", "of").
+ • Hindari:
+  → Pengulangan kata
+  → Kata bermerek, nama orang, atau lokasi spesifik
+  → Klaim subjektif seperti "best" atau "exclusive"
+ • Output format:
+  → Baris 1: Judul dalam bahasa Inggris
+  → Baris 2: Terjemahan bahasa Indonesia (dalam tanda kurung)
+ • Penting:
+  → Hasil harus orisinal, relevan, bebas kata terlarang/copyright
+  → Tidak menyalin contoh literal
+
+Contoh Hasil (jangan dicopy literal):
+Hand-Drawn Watercolor Floral Pattern Seamless for Packaging, Wallpaper, and Fabric
+(Pola Bunga Cat Air Buatan Tangan Tanpa Sambungan untuk Kemasan, Wallpaper, dan Kain)
+        </textarea>
+        <div class="btns">
+          <button onclick="copyText('prompt_judul')">Copy Prompt</button>
+        </div>
+      </section>
+
+      <!-- Prompt Convert Judul iStock -->
+      <section class="card">
+        <h2>
+          Prompt Convert Judul iStock
+          <button class="btn-danger" onclick="resetFieldsConvert()">Reset</button>
+        </h2>
+
+        <label for="judul_convert">Judul:</label>
+        <textarea id="judul_convert" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="pasteTo('judul_convert')">Paste</button>
+          <button onclick="generatePromptConvert()">Generate Prompt</button>
+        </div>
+
+        <label for="promptOutput_convert">Prompt Hasil:</label>
+        <textarea id="promptOutput_convert" rows="12" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <div class="btns">
+          <button onclick="copyText('promptOutput_convert')">Copy Prompt</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bawah: Ss & As + iStock -->
+    <div class="columns">
       <!-- Prompt Keyword Ss & As -->
       <section class="card">
         <h2>
           Prompt Keyword Ss &amp; As
           <button class="btn-danger" onclick="resetFieldsSS()">Reset</button>
         </h2>
-
         <label for="judul_ss">Judul:</label>
         <textarea id="judul_ss" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
         <div class="btns">
           <button onclick="pasteTo('judul_ss')">Paste</button>
           <button onclick="generatePromptSS()">Generate Prompt</button>
         </div>
-
         <label for="promptOutput_ss">Prompt Hasil:</label>
-        <textarea id="promptOutput_ss" rows="10" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <textarea id="promptOutput_ss" rows="10" readonly></textarea>
         <div class="btns">
           <button onclick="copyText('promptOutput_ss')">Copy Prompt</button>
         </div>
@@ -153,76 +175,87 @@ Contoh format (referensi, jangan dicopy kata per kata):
           Prompt Keyword iStock
           <button class="btn-danger" onclick="resetFieldsIstock()">Reset</button>
         </h2>
-
         <label for="judul_istock">Judul:</label>
         <textarea id="judul_istock" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
-        <div class="btns">
-          <button onclick="pasteTo('judul_istock')">Paste</button>
-        </div>
-
+        <div class="btns"><button onclick="pasteTo('judul_istock')">Paste</button></div>
         <label for="keyword_istock">Keyword (awal):</label>
-        <textarea id="keyword_istock" rows="5" placeholder="Tempel daftar keyword awal (dipisahkan koma)..."></textarea>
+        <textarea id="keyword_istock" rows="5" placeholder="Tempel daftar keyword awal..."></textarea>
         <div class="btns">
           <button onclick="pasteTo('keyword_istock')">Paste</button>
           <button onclick="generatePromptIstock()">Generate Prompt</button>
         </div>
-
         <label for="promptOutput_istock">Prompt Hasil:</label>
-        <textarea id="promptOutput_istock" rows="10" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <textarea id="promptOutput_istock" rows="10" readonly></textarea>
         <div class="btns">
           <button onclick="copyText('promptOutput_istock')">Copy Prompt</button>
         </div>
       </section>
-
     </div>
   </div>
 
-  <!-- Notif -->
   <div class="copy-notif" id="notif">✅ Prompt berhasil disalin!</div>
 
 <script>
   async function pasteTo(id){
-    try{
-      const text = await navigator.clipboard.readText();
-      document.getElementById(id).value = text;
-    }catch(e){
-      alert('Gagal membaca clipboard. Pastikan memberi izin paste.');
-    }
+    try{document.getElementById(id).value = await navigator.clipboard.readText();}
+    catch{alert('Gagal membaca clipboard.');}
   }
   async function copyText(id){
     try{
-      const text = document.getElementById(id).value;
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(document.getElementById(id).value);
       showNotif();
     }catch(e){
-      const ta = document.getElementById(id);
+      const ta=document.getElementById(id);
       ta.select(); document.execCommand('copy');
       showNotif();
     }
   }
   function showNotif(){
-    const notif = document.getElementById('notif');
-    notif.classList.add('show');
-    setTimeout(()=> notif.classList.remove('show'), 1500);
+    const n=document.getElementById('notif');
+    n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),1500);
   }
   function highlight(id){
-    const el = document.getElementById(id);
-    el.classList.add('highlight');
-    setTimeout(()=> el.classList.remove('highlight'), 1500);
+    const el=document.getElementById(id);
+    el.classList.add('highlight'); setTimeout(()=>el.classList.remove('highlight'),1500);
+  }
+
+  function resetFieldsConvert(){
+    document.getElementById('judul_convert').value='';
+    document.getElementById('promptOutput_convert').value='';
   }
   function resetFieldsSS(){
-    document.getElementById('judul_ss').value = '';
-    document.getElementById('promptOutput_ss').value = '';
+    document.getElementById('judul_ss').value='';
+    document.getElementById('promptOutput_ss').value='';
   }
   function resetFieldsIstock(){
-    document.getElementById('judul_istock').value = '';
-    document.getElementById('keyword_istock').value = '';
-    document.getElementById('promptOutput_istock').value = '';
+    document.getElementById('judul_istock').value='';
+    document.getElementById('keyword_istock').value='';
+    document.getElementById('promptOutput_istock').value='';
   }
+
+  function generatePromptConvert(){
+    const judul=document.getElementById('judul_convert').value.trim();
+    if(!judul){alert('Judul tidak boleh kosong!');return;}
+    const prompt=`# 📌 Prompt Judul iStock
+judul: [${judul}]
+
+Buat judul jadi deskriptif singkat untuk karya desain yang akan diunggah ke **iStock/Getty Images** dengan mengikuti aturan berikut:
+
+- Gunakan gaya bahasa natural dan ringkas, hindari terlihat seperti tumpukan keyword.
+- Fokus pada Produk Utama dan Detail Visual/Style.
+- Panjang ideal 40–80 karakter.
+- Hindari terlalu banyak kata sambungan seperti "for website, for poster".
+- Mood boleh disebut hanya jika benar-benar terasa dari visualnya.
+- Hasil dalam bahasa Inggris (1 baris), lalu buat terjemahan dalam bahasa Indonesia di baris berikutnya.
+- Berikan 3–4 opsi judul untuk variasi.`;
+    const out=document.getElementById('promptOutput_convert');
+    out.value=prompt; highlight('promptOutput_convert');
+  }
+
   function generatePromptSS(){
-    const judul = document.getElementById('judul_ss').value.trim();
-    if(!judul){ alert('Judul tidak boleh kosong!'); return; }
-    const prompt = `Judul: [${judul}]
+    const judul=document.getElementById('judul_ss').value.trim();
+    if(!judul){alert('Judul tidak boleh kosong!');return;}
+    const prompt=`Judul: [${judul}]
 
 Perintah:
 
@@ -250,41 +283,44 @@ Kata Pendukung Umum → kata yang bersifat luas untuk jangkauan trafik.
 - Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
 - Sebutkan jumlah total keyword.
 - Tandai keyword urutan 1–15 sebagai Essential.`;
-    const out = document.getElementById('promptOutput_ss');
-    out.value = prompt;
-    highlight('promptOutput_ss');
+    const out=document.getElementById('promptOutput_ss');
+    out.value=prompt; highlight('promptOutput_ss');
   }
+
   function generatePromptIstock(){
-    const judul = document.getElementById('judul_istock').value.trim();
-    const keyword = document.getElementById('keyword_istock').value.trim();
-    if(!judul || !keyword){ alert('Judul dan Keyword tidak boleh kosong!'); return; }
-    const prompt = `Judul: [${judul}]
+    const judul=document.getElementById('judul_istock').value.trim();
+    const keyword=document.getElementById('keyword_istock').value.trim();
+    if(!judul||!keyword){alert('Judul dan Keyword tidak boleh kosong!');return;}
+    const prompt=`Judul: [${judul}]
 
 Keyword (awal): [${keyword}]
 
 Instruksi:
 1. Tambahkan hingga 3 kata tunggal dari judul jika belum ada di daftar keyword awal, untuk menjaga relevansi dan sinkronisasi. Jangan tambahkan frasa atau gabungan kata pada tahap ini.
+
 2. Hapus keyword yang tidak relevan dengan judul atau visual khas iStock, baik karena kurang cocok, jarang dicari, atau tidak menjelaskan isi visual dengan tepat.
+
 3. Jangan ubah, pecah, atau singkat keyword yang sudah ada, termasuk frasa tiga kata atau lebih. Pertahankan semua keyword sesuai bentuk aslinya.
+
 4. Kelompokkan keyword ke dalam tiga kategori:
 - Essential Keywords (10–15 kata): Objek utama, tema sentral, dan istilah paling kompetitif.
 - Main Keywords (15–20 kata): Unsur visual, teknis, warna, dan elemen pendukung lainnya.
 - Additional Keywords (sisanya): Kata pendukung, sinonim, metafora visual, atau gaya presentasi.
+
 5. Batasi jumlah keyword maksimal 50 dan sortir berdasarkan relevansi terhadap judul.
 
 Catatan Khusus:
 Tidak ada batas jumlah kata dalam keyword. Kata tunggal, dua kata, bahkan tiga atau lebih boleh digunakan selama memang relevan dan bermanfaat.
 
 Output akhir:
-- Gabungkan semua keyword ke dalam satu baris.
-- Urut berdasarkan kategori: essential > main > additional.
-- Gunakan huruf kecil semua, pisahkan dengan koma, dan jaga frasa tetap utuh sesuai aslinya.
+-Gabungkan semua keyword ke dalam satu baris.
+-Urut berdasarkan kategori: essential > main > additional.
+-Gunakan huruf kecil semua, pisahkan dengan koma, dan jaga frasa tetap utuh sesuai aslinya.
 
 Deskripsi:
 Buatkan deskripsi sepanjang ±150 karakter, profesional dan selaras dengan judul serta keyword. Fokus pada isi visual dan konteks penggunaannya.`;
-    const out = document.getElementById('promptOutput_istock');
-    out.value = prompt;
-    highlight('promptOutput_istock');
+    const out=document.getElementById('promptOutput_istock');
+    out.value=prompt; highlight('promptOutput_istock');
   }
 </script>
 </body>
