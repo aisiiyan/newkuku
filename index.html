@@ -3,86 +3,137 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Prompt Tools — Judul, Convert Judul iStock, Ss & As, iStock</title>
+<title>Prompt Tools</title>
 <style>
   :root{
     --bg:#f5f5f5;
     --card:#ffffff;
-    --muted:#f9f9f9;
+    --muted:#f1f1f1;
     --text:#111;
-    --primary:#0a7cff;
-    --primary-hover:#055ec2;
-    --danger:#e44747;
-    --danger-hover:#b22f2f;
-    --radius:12px;
+    --radius:10px;
+
+    /* Soft colors (light) */
+    --btn-reset-bg:#fdecea;  --btn-reset-fg:#e74c3c;
+    --btn-paste-bg:#f3e8fd;  --btn-paste-fg:#6f42c1;
+    --btn-copy-bg:#e6f9ed;   --btn-copy-fg:#2ecc71;
+    --btn-gen-bg:#e6f0ff;    --btn-gen-fg:#2f80ed;
   }
-  *{box-sizing:border-box}
+
+  *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    margin:0; padding:20px;
-    font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     background:var(--bg); color:var(--text);
+    line-height:1.5; padding:16px;
   }
-  .wrapper{display:flex; flex-direction:column; gap:20px; max-width:1200px; margin:0 auto;}
-  .columns{display:flex; gap:20px; flex-wrap:wrap;}
+  .wrapper{max-width:1200px; margin:auto; display:flex; flex-direction:column; gap:20px;}
+  .columns{
+    display:grid; gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  }
   .card{
     background:var(--card);
     border-radius:var(--radius);
-    box-shadow:0 4px 16px rgba(0,0,0,.06);
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
     padding:16px;
-    flex:1;
-    min-width:320px;
   }
   .card h2{
-    margin:0 0 10px 0;
-    font-size:18px; font-weight:700;
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px;
+    font-size:18px; font-weight:700; margin-bottom:12px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;
   }
-  label{display:block; font-size:13px; font-weight:600; margin-top:10px;}
-  textarea{
-    width:100%; min-height:84px; margin:6px 0 0 0;
-    padding:10px 12px; border:none; border-radius:10px;
-    background:var(--muted); color:var(--text); resize:vertical; font-size:14px; line-height:1.45;
-  }
+  label{display:block; font-size:14px; font-weight:600; margin-top:10px;}
+textarea{
+  width:100%;
+  min-height:80px; /* setara ±4 baris */
+  margin-top:6px;
+  padding:8px 10px;
+  border:none; border-radius:10px;
+  background:var(--muted); color:var(--text);
+  font-size:14px; resize:vertical; line-height:1.4;
+}
+
+
+  /* Tombol pill modern */
   .btns{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
   button{
-    appearance:none; border:none; cursor:pointer;
-    border-radius:10px; padding:8px 12px; font-size:13px; font-weight:600;
-    background:var(--primary); color:#fff;
+    font-weight:500; padding:8px 14px; font-size:13px;
+    border:none; border-radius:999px; cursor:pointer;
+    transition:background-color .2s ease, transform .05s ease;
+    display:flex; align-items:center; gap:6px;
+    outline: none;
   }
-  button:hover{background:var(--primary-hover)}
-  .btn-danger{background:var(--danger)}
-  .btn-danger:hover{background:var(--danger-hover)}
-  .highlight{ background:#d4edda !important; transition:background-color .6s ease; }
+  button:active{ transform:translateY(1px); }
+
+  /* Icons */
+  button svg{ width:14px; height:14px; stroke-width:2; }
+
+  /* Varian tombol (light mode) */
+  .btn-reset   { background:var(--btn-reset-bg);  color:var(--btn-reset-fg); }
+  .btn-paste   { background:var(--btn-paste-bg);  color:var(--btn-paste-fg); }
+  .btn-copy    { background:var(--btn-copy-bg);   color:var(--btn-copy-fg); }
+  .btn-generate{ background:var(--btn-gen-bg);    color:var(--btn-gen-fg); }
+
+  .btn-reset:hover   { background:#f9d7d5; }
+  .btn-paste:hover   { background:#e9d5fa; }
+  .btn-copy:hover    { background:#d4f5e2; }
+  .btn-generate:hover{ background:#d6e4ff; }
+
+  /* Notifikasi copy */
   .copy-notif {
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: 13px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
+    background: rgba(0,0,0,.85);
+    color:#fff; padding:6px 12px; border-radius:8px;
+    position:fixed; top:20px; right:20px;
+    font-size:13px; opacity:0; transition:.25s; z-index:1000;
   }
-  .copy-notif.show { opacity: 1; }
-  @media (max-width: 720px){
-    .card h2{align-items:flex-start; flex-direction:column; gap:8px;}
+  .copy-notif.show{opacity:1;}
+
+  /* Toggle dark */
+  #toggleDark{
+    position:fixed; top:16px; right:16px;
+    background:#eee; color:#111; border:none; border-radius:999px;
+    padding:8px 12px; cursor:pointer; font-size:13px; z-index:1100;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  /* --- DARK MODE --- */
+  body.dark-mode{
+    --bg:#0f0f0f;
+    --card:#212121;
+    --muted:#111111;
+    --text:#f5f5f5;
+
+    /* Soft colors tuned for dark */
+    --btn-reset-bg:#442424;  --btn-reset-fg:#ff6b6b;
+    --btn-paste-bg:#3b2a4d;  --btn-paste-fg:#b388eb;
+    --btn-copy-bg:#1f3b2f;   --btn-copy-fg:#4cd964;
+    --btn-gen-bg:#1e2a44;    --btn-gen-fg:#4da3ff;
+  }
+  body.dark-mode #toggleDark{ background:#333; color:#fff; }
+  body.dark-mode .card{ color:var(--text); }
+  body.dark-mode textarea{ color:var(--text); }
+
+  @media (max-width:600px){
+    body{padding:12px;}
+    .card h2{font-size:16px;}
+    button{flex:1 1 auto;}
   }
 </style>
 </head>
-<body>
-  <div class="wrapper">
 
-    <!-- Kolom atas: Prompt Judul & Prompt Convert Judul iStock -->
+<!-- Default: DARK MODE aktif -->
+<body class="dark-mode">
+  <!-- Toggle light/dark -->
+  <button id="toggleDark" type="button" title="Ganti tema">
+    ☀️ Light
+  </button>
+
+  <div class="wrapper">
+    <!-- Baris 1: Prompt Judul + Prompt Keyword Ss&As -->
     <div class="columns">
       <!-- Prompt Judul -->
       <section class="card">
         <h2>Prompt Judul</h2>
         <label for="prompt_judul">Teks Prompt:</label>
-        <textarea id="prompt_judul" rows="14" readonly>
+        <textarea id="prompt_judul" rows="4" readonly>
 PERINTAH:
 Buat 4 judul unik dan berbeda berdasarkan foto yang diunggah, dengan masing-masing mengikuti aturan ini:
 
@@ -120,52 +171,111 @@ Aturan:
 Contoh Hasil (jangan dicopy literal):
 Hand-Drawn Watercolor Floral Pattern Seamless for Packaging, Wallpaper, and Fabric
 (Pola Bunga Cat Air Buatan Tangan Tanpa Sambungan untuk Kemasan, Wallpaper, dan Kain)
+
         </textarea>
         <div class="btns">
-          <button onclick="copyText('prompt_judul')">Copy Prompt</button>
+          <button class="btn-copy" onclick="copyText('prompt_judul')" type="button" title="Salin Prompt">
+            <!-- check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            Copy
+          </button>
         </div>
       </section>
 
-      <!-- Prompt Convert Judul iStock -->
-      <section class="card">
-        <h2>
-          Prompt Convert Judul iStock
-          <button class="btn-danger" onclick="resetFieldsConvert()">Reset</button>
-        </h2>
-
-        <label for="judul_convert">Judul:</label>
-        <textarea id="judul_convert" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
-        <div class="btns">
-          <button onclick="pasteTo('judul_convert')">Paste</button>
-          <button onclick="generatePromptConvert()">Generate Prompt</button>
-        </div>
-
-        <label for="promptOutput_convert">Prompt Hasil:</label>
-        <textarea id="promptOutput_convert" rows="12" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
-        <div class="btns">
-          <button onclick="copyText('promptOutput_convert')">Copy Prompt</button>
-        </div>
-      </section>
-    </div>
-
-    <!-- Bawah: Ss & As + iStock -->
-    <div class="columns">
       <!-- Prompt Keyword Ss & As -->
       <section class="card">
         <h2>
           Prompt Keyword Ss &amp; As
-          <button class="btn-danger" onclick="resetFieldsSS()">Reset</button>
+          <button class="btn-reset" onclick="resetFieldsSS()" type="button" title="Reset kolom SS">
+            <!-- X -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Reset
+          </button>
         </h2>
+
         <label for="judul_ss">Judul:</label>
-        <textarea id="judul_ss" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
+        <textarea id="judul_ss" rows="1" placeholder="Tulis/Tempel judul di sini..."></textarea>
+
         <div class="btns">
-          <button onclick="pasteTo('judul_ss')">Paste</button>
-          <button onclick="generatePromptSS()">Generate Prompt</button>
+          <button class="btn-paste" onclick="pasteTo('judul_ss')" type="button" title="Paste dari clipboard">
+            <!-- clipboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8l4-4z"/>
+            </svg>
+            Paste
+          </button>
+          <button class="btn-generate" onclick="generatePromptSS()" type="button" title="Generate prompt SS">
+            <!-- lightning -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Generate
+          </button>
         </div>
-        <label for="promptOutput_ss">Prompt Hasil:</label>
-        <textarea id="promptOutput_ss" rows="10" readonly></textarea>
+
+        <label for="promptOutput_ss">Hasil:</label>
+        <textarea id="promptOutput_ss" rows="1" readonly placeholder="Hasil akan muncul di sini..."></textarea>
         <div class="btns">
-          <button onclick="copyText('promptOutput_ss')">Copy Prompt</button>
+          <button class="btn-copy" onclick="copyText('promptOutput_ss')" type="button" title="Salin hasil">
+            <!-- check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            Copy
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Baris 2: Prompt Convert Judul iStock + Prompt Keyword iStock -->
+    <div class="columns">
+      <!-- Prompt Convert Judul iStock -->
+      <section class="card">
+        <h2>
+          Prompt Convert Judul iStock
+          <button class="btn-reset" onclick="resetFieldsConvert()" type="button" title="Reset kolom Convert">
+            <!-- X -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Reset
+          </button>
+        </h2>
+
+        <label for="judul_convert">Judul:</label>
+        <textarea id="judul_convert" rows="1" placeholder="Tulis/Tempel judul di sini..."></textarea>
+
+        <div class="btns">
+          <button class="btn-paste" onclick="pasteTo('judul_convert')" type="button" title="Paste dari clipboard">
+            <!-- clipboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8l4-4z"/>
+            </svg>
+            Paste
+          </button>
+          <button class="btn-generate" onclick="generatePromptConvert()" type="button" title="Generate prompt Convert">
+            <!-- lightning -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Generate
+          </button>
+        </div>
+
+        <label for="promptOutput_convert">Hasil:</label>
+        <textarea id="promptOutput_convert" rows="1" readonly placeholder="Hasil prompt akan muncul di sini..."></textarea>
+        <div class="btns">
+          <button class="btn-copy" onclick="copyText('promptOutput_convert')" type="button" title="Salin hasil">
+            <!-- check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            Copy
+          </button>
         </div>
       </section>
 
@@ -173,21 +283,58 @@ Hand-Drawn Watercolor Floral Pattern Seamless for Packaging, Wallpaper, and Fabr
       <section class="card">
         <h2>
           Prompt Keyword iStock
-          <button class="btn-danger" onclick="resetFieldsIstock()">Reset</button>
+          <button class="btn-reset" onclick="resetFieldsIstock()" type="button" title="Reset kolom iStock">
+            <!-- X -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Reset
+          </button>
         </h2>
+
         <label for="judul_istock">Judul:</label>
-        <textarea id="judul_istock" rows="3" placeholder="Tulis/Tempel judul di sini..."></textarea>
-        <div class="btns"><button onclick="pasteTo('judul_istock')">Paste</button></div>
-        <label for="keyword_istock">Keyword (awal):</label>
-        <textarea id="keyword_istock" rows="5" placeholder="Tempel daftar keyword awal..."></textarea>
+        <textarea id="judul_istock" rows="1" placeholder="Tulis/Tempel judul di sini..."></textarea>
+
         <div class="btns">
-          <button onclick="pasteTo('keyword_istock')">Paste</button>
-          <button onclick="generatePromptIstock()">Generate Prompt</button>
+          <button class="btn-paste" onclick="pasteTo('judul_istock')" type="button" title="Paste dari clipboard">
+            <!-- clipboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8l4-4z"/>
+            </svg>
+            Paste
+          </button>
         </div>
-        <label for="promptOutput_istock">Prompt Hasil:</label>
-        <textarea id="promptOutput_istock" rows="10" readonly></textarea>
+
+        <label for="keyword_istock">Keyword (awal):</label>
+        <textarea id="keyword_istock" rows="1" placeholder="Tempel daftar keyword awal..."></textarea>
+
         <div class="btns">
-          <button onclick="copyText('promptOutput_istock')">Copy Prompt</button>
+          <button class="btn-paste" onclick="pasteTo('keyword_istock')" type="button" title="Paste dari clipboard">
+            <!-- clipboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16h8M8 12h8m-6-8h6a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8l4-4z"/>
+            </svg>
+            Paste
+          </button>
+          <button class="btn-generate" onclick="generatePromptIstock()" type="button" title="Generate prompt iStock">
+            <!-- lightning -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Generate
+          </button>
+        </div>
+
+        <label for="promptOutput_istock">Hasil:</label>
+        <textarea id="promptOutput_istock" rows="1" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+        <div class="btns">
+          <button class="btn-copy" onclick="copyText('promptOutput_istock')" type="button" title="Salin hasil">
+            <!-- check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            Copy
+          </button>
         </div>
       </section>
     </div>
@@ -196,29 +343,44 @@ Hand-Drawn Watercolor Floral Pattern Seamless for Packaging, Wallpaper, and Fabr
   <div class="copy-notif" id="notif">✅ Prompt berhasil disalin!</div>
 
 <script>
+  // Toggle Dark / Light
+  const toggleBtn=document.getElementById('toggleDark');
+  function updateToggleText(){
+    toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light' : '🌙 Dark';
+  }
+  toggleBtn.addEventListener('click',()=>{
+    document.body.classList.toggle('dark-mode');
+    updateToggleText();
+  });
+  updateToggleText(); // default sudah dark
+
+  // Clipboard helpers
   async function pasteTo(id){
-    try{document.getElementById(id).value = await navigator.clipboard.readText();}
-    catch{alert('Gagal membaca clipboard.');}
+    try{
+      const text = await navigator.clipboard.readText();
+      document.getElementById(id).value = text;
+    }catch{
+      alert('Gagal membaca clipboard. Pastikan izin clipboard aktif.');
+    }
   }
   async function copyText(id){
+    const val = document.getElementById(id).value;
     try{
-      await navigator.clipboard.writeText(document.getElementById(id).value);
+      await navigator.clipboard.writeText(val);
       showNotif();
-    }catch(e){
-      const ta=document.getElementById(id);
+    }catch{
+      // fallback lama
+      const ta = document.getElementById(id);
       ta.select(); document.execCommand('copy');
       showNotif();
     }
   }
   function showNotif(){
     const n=document.getElementById('notif');
-    n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),1500);
-  }
-  function highlight(id){
-    const el=document.getElementById(id);
-    el.classList.add('highlight'); setTimeout(()=>el.classList.remove('highlight'),1500);
+    n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),1300);
   }
 
+  // Reset helpers
   function resetFieldsConvert(){
     document.getElementById('judul_convert').value='';
     document.getElementById('promptOutput_convert').value='';
@@ -233,8 +395,9 @@ Hand-Drawn Watercolor Floral Pattern Seamless for Packaging, Wallpaper, and Fabr
     document.getElementById('promptOutput_istock').value='';
   }
 
+  // Generate helpers (placeholder contoh—silakan sesuaikan logic asli kamu)
   function generatePromptConvert(){
-    const judul=document.getElementById('judul_convert').value.trim();
+    const judul=(document.getElementById('judul_convert').value||'').trim();
     if(!judul){alert('Judul tidak boleh kosong!');return;}
     const prompt=`# 📌 Prompt Judul iStock
 judul: [${judul}]
@@ -248,15 +411,13 @@ Buat judul jadi deskriptif singkat untuk karya desain yang akan diunggah ke **iS
 - Mood boleh disebut hanya jika benar-benar terasa dari visualnya.
 - Hasil dalam bahasa Inggris (1 baris), lalu buat terjemahan dalam bahasa Indonesia di baris berikutnya.
 - Berikan 3–4 opsi judul untuk variasi.`;
-    const out=document.getElementById('promptOutput_convert');
-    out.value=prompt; highlight('promptOutput_convert');
+    document.getElementById('promptOutput_convert').value=prompt;
   }
 
   function generatePromptSS(){
-    const judul=document.getElementById('judul_ss').value.trim();
+    const judul=(document.getElementById('judul_ss').value||'').trim();
     if(!judul){alert('Judul tidak boleh kosong!');return;}
     const prompt=`Judul: [${judul}]
-
 Perintah:
 
 1. Salin semua teks keyword pada gambar tanpa typo dan pastikan tidak ada yang tertinggal.
@@ -283,17 +444,15 @@ Perintah:
    - Daftar akhir keyword (digabung jadi satu baris, dipisahkan dengan koma).
    - Sebutkan jumlah total keyword.
    - Tandai keyword urutan 1–15 sebagai Essential.`;
-    const out=document.getElementById('promptOutput_ss');
-    out.value=prompt; highlight('promptOutput_ss');
+    document.getElementById('promptOutput_ss').value=prompt;
   }
 
   function generatePromptIstock(){
-    const judul=document.getElementById('judul_istock').value.trim();
-    const keyword=document.getElementById('keyword_istock').value.trim();
+    const judul=(document.getElementById('judul_istock').value||'').trim();
+    const keyword=(document.getElementById('keyword_istock').value||'').trim();
     if(!judul||!keyword){alert('Judul dan Keyword tidak boleh kosong!');return;}
     const prompt=`Judul: [${judul}]
-
-Keyword (awal): [${keyword}]
+Keyword awal: [${keyword}]
 
 Instruksi:
 1. Tambahkan hingga 3 kata tunggal dari judul jika belum ada di daftar keyword awal, untuk menjaga relevansi dan sinkronisasi. Jangan tambahkan frasa atau gabungan kata pada tahap ini.
@@ -315,11 +474,8 @@ Instruksi:
    - Sebutkan jumlah total keyword.
    - Tandai keyword urutan 1–15 sebagai Essential.
 9.Deskripsi:
- Buat deskripsi sepanjang ±150 karakter, profesional dan selaras dengan judul serta keyword. Fokus pada isi visual dan konteks penggunaannya.
-
-`;
-    const out=document.getElementById('promptOutput_istock');
-    out.value=prompt; highlight('promptOutput_istock');
+ Buat deskripsi sepanjang ±150 karakter, profesional dan selaras dengan judul serta keyword. Fokus pada isi visual dan konteks penggunaannya.`;
+    document.getElementById('promptOutput_istock').value=prompt;
   }
 </script>
 </body>
